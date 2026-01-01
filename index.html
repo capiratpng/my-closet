@@ -3,298 +3,296 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Style Vault</title>
-    <meta name="apple-mobile-web-app-title" content="Style Vault">
+    <title>My MCM Closet Archive</title>
     <style>
+        /* ALL YOUR CSS GOES HERE */
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;700&family=Syne:wght@700&display=swap');
 
-:root {
-  --teal: #1e5f74;
-  --orange: #d9534f;
-  --mustard: #e8a628;
-  --cream: #f4eee0;
-  --dark: #2d2926;
-}
+        :root {
+            --teal: #1e5f74; --orange: #d9534f; --mustard: #e8a628;
+            --cream: #f4eee0; --dark: #2d2926;
+        }
 
-body {
-  font-family: 'Space Grotesk', sans-serif;
-  background-color: var(--cream);
-  color: var(--dark);
-  margin: 0;
-  padding: 20px;
-}
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background-color: var(--cream); color: var(--dark);
+            margin: 0; padding: 20px;
+        }
 
-.container { max-width: 450px; margin: auto; }
-header { text-align: center; margin-bottom: 40px; }
+        .container { max-width: 450px; margin: auto; }
+        header { text-align: center; margin-bottom: 40px; }
 
-header h1 {
-  font-family: 'Syne', sans-serif;
-  font-size: 3rem;
-  text-transform: uppercase;
-  margin: 0;
-  color: var(--teal);
-  letter-spacing: -2px;
-}
+        header h1 {
+            font-family: 'Syne', sans-serif; font-size: 3rem;
+            text-transform: uppercase; margin: 0; color: var(--teal);
+            letter-spacing: -2px;
+        }
 
-.subtitle {
-  font-size: 0.7rem; letter-spacing: 3px; font-weight: 700;
-  margin-top: 5px; color: var(--orange);
-}
+        .subtitle {
+            font-size: 0.7rem; letter-spacing: 3px; font-weight: 700;
+            margin-top: 5px; color: var(--orange);
+        }
 
-.atomic-star { font-size: 2rem; color: var(--mustard); margin-bottom: -10px; }
+        .atomic-star { font-size: 2rem; color: var(--mustard); margin-bottom: -10px; }
 
-.upload-card, .stats-panel {
-  background: white; padding: 20px; border: 3px solid var(--dark);
-  box-shadow: 8px 8px 0px var(--mustard); margin-bottom: 30px;
-}
+        .upload-card, .stats-panel {
+            background: white; padding: 20px; border: 3px solid var(--dark);
+            box-shadow: 8px 8px 0px var(--mustard); margin-bottom: 30px;
+        }
 
-.custom-file-upload {
-  display: block; background: var(--teal); color: white; padding: 15px;
-  text-align: center; cursor: pointer; font-weight: bold;
-  text-transform: uppercase; border: 2px solid var(--dark);
-}
+        .custom-file-upload {
+            display: block; background: var(--teal); color: white; padding: 15px;
+            text-align: center; cursor: pointer; font-weight: bold;
+            text-transform: uppercase; border: 2px solid var(--dark);
+        }
 
-#outfitName, #tagInput, #searchBar {
-  width: 100%; padding: 12px; border: 2px solid var(--dark);
-  background: #fdfaf5; font-family: 'Space Grotesk', sans-serif;
-  box-sizing: border-box;
-}
+        #outfitName, #tagInput, #searchBar {
+            width: 100%; padding: 12px; border: 2px solid var(--dark);
+            background: #fdfaf5; font-family: 'Space Grotesk', sans-serif;
+            box-sizing: border-box; margin-bottom: 10px;
+        }
 
-.add-btn {
-  width: 100%; background: var(--orange); color: white;
-  border: 2px solid var(--dark); padding: 12px; cursor: pointer;
-  font-weight: bold; text-transform: uppercase;
-}
+        .add-btn {
+            width: 100%; background: var(--orange); color: white;
+            border: 2px solid var(--dark); padding: 12px; cursor: pointer;
+            font-weight: bold; text-transform: uppercase;
+        }
 
-/* Fixed Preview CSS */
-.hidden { display: none !important; }
+        .hidden { display: none !important; }
 
-.preview-thumbnail-wrapper {
-  text-align: center; padding: 10px; background: #fdfaf5;
-  border: 1px dashed var(--teal); margin: 15px 0;
-}
+        .preview-thumbnail-wrapper {
+            text-align: center; padding: 10px; background: #fdfaf5;
+            border: 1px dashed var(--teal); margin: 15px 0;
+        }
 
-#imagePreview {
-  width: 120px; height: 120px; object-fit: contain;
-  border: 2px solid var(--dark); background: white;
-}
+        #imagePreview {
+            width: 120px; height: 120px; object-fit: contain;
+            border: 2px solid var(--dark); background: white;
+        }
 
-/* Moodboard Canvas */
-.moodboard-display {
-  background-color: white; border: 2px solid var(--dark);
-  min-height: 250px; display: flex; flex-wrap: wrap;
-  justify-content: center; align-items: center; padding: 10px; gap: 5px;
-}
+        .moodboard-display {
+            background-color: white; border: 2px solid var(--dark);
+            min-height: 250px; display: flex; flex-wrap: wrap;
+            justify-content: center; align-items: center; padding: 10px; gap: 5px;
+        }
 
-#moodboardHint { font-size: 0.8rem; opacity: 0.5; text-align: center; }
+        .moodboard-item {
+            width: 110px; height: 110px; object-fit: contain;
+            filter: drop-shadow(4px 4px 0px rgba(0,0,0,0.05)); cursor: pointer;
+        }
 
-.moodboard-item {
-  width: 110px; height: 110px; object-fit: contain;
-  filter: drop-shadow(4px 4px 0px rgba(0,0,0,0.05)); cursor: pointer;
-}
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 
-/* Grid & Cards */
-.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .item-card {
+            background: white; border: 2px solid var(--dark);
+            padding: 5px; box-shadow: 4px 4px 0px var(--teal);
+        }
 
-.item-card {
-  background: white; border: 2px solid var(--dark);
-  padding: 5px; box-shadow: 4px 4px 0px var(--teal);
-}
+        .item-card img {
+            width: 100%; height: 160px; object-fit: contain;
+            background: radial-gradient(circle, #fff 0%, #fcfaf5 100%); cursor: copy;
+        }
 
-.item-card img {
-  width: 100%; height: 160px; object-fit: contain;
-  background: radial-gradient(circle, #fff 0%, #fcfaf5 100%); cursor: copy;
-}
+        .tag-pill {
+            background: var(--mustard); color: var(--dark); font-size: 10px;
+            padding: 4px 8px; margin: 2px; font-weight: bold;
+            display: inline-block; cursor: pointer; border: 1px solid var(--dark);
+        }
 
-.tag-pill {
-  background: var(--mustard); color: var(--dark); font-size: 10px;
-  padding: 4px 8px; margin: 2px; font-weight: bold;
-  display: inline-block; cursor: pointer; border: 1px solid var(--dark);
-}
+        .delete-btn {
+            background: var(--dark); color: white; border: none;
+            font-size: 10px; padding: 2px 6px; cursor: pointer;
+        }
 
-.delete-btn {
-  background: var(--dark); color: white; border: none;
-  font-size: 10px; padding: 2px 6px; cursor: pointer;
-}
-
-.stats-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
-.stat-item { background: var(--cream); border: 1px solid var(--dark); padding: 4px 8px; font-size: 0.75rem; font-weight: 700; }
+        .stats-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+        .stat-item { background: var(--cream); border: 1px solid var(--dark); padding: 4px 8px; font-size: 0.75rem; font-weight: 700; }
     </style>
 </head>
 <body>
+
+    <div class="container">
+        <header>
+            <div class="atomic-star">✦</div>
+            <h1>My Closet</h1>
+            <p class="subtitle">EST. 2026 • THE PERSONAL COLLECTION</p>
+        </header>
+
+        <div id="moodboardSection" class="stats-panel" style="border-style: dashed;">
+            <h3>Moodboard Canvas</h3>
+            <input type="text" id="outfitName" placeholder="Name this look (e.g., Mod Monday)">
+            <div style="display: flex; gap: 10px;">
+                <button class="add-btn" style="background:var(--mustard); color:var(--dark); flex: 1;" onclick="saveMoodboard()">📸 Save</button>
+                <button class="add-btn" style="background:var(--orange); flex: 1;" onclick="clearMoodboard()">Clear</button>
+            </div>
+            <div id="moodboardCanvas" class="moodboard-display" style="margin-top: 10px;">
+                <p id="moodboardHint">Click items below to add to moodboard</p>
+            </div>
+        </div>
+        
+        <div class="upload-card">
+            <label class="custom-file-upload">
+                <input type="file" id="fileInput" accept="image/*" capture="environment" onchange="showPreview(this)">
+                Upload or take photo
+            </label>
+            <div id="previewContainer" class="hidden preview-thumbnail-wrapper">
+                <img id="imagePreview" src="">
+            </div>
+            <input type="text" id="tagInput" placeholder="Add tags (e.g. Jeans, Tan, Casual)">
+            <button class="add-btn" onclick="processAndSave()">Save to Closet</button>
+        </div>
+
+        <div class="search-area" style="margin-bottom: 20px;">
+            <input type="text" id="searchBar" placeholder="Search archives..." onkeyup="filterBySearch()">
+        </div>
+
+        <div class="grid" id="closetGrid"></div>
+        
+        <div class="stats-panel" id="statsPanel">
+            <h3>Insights</h3>
+            <div id="statsContent" class="stats-grid"></div>
+        </div>
+
+        <div class="stats-panel">
+            <h3>Backup</h3>
+            <button class="add-btn" style="background:var(--teal); margin-bottom: 10px;" onclick="exportCloset()">Download Backup</button>
+            <label class="custom-file-upload" style="background:var(--mustard); color:var(--dark); font-size: 0.8rem;">
+                <input type="file" id="importInput" accept=".json" onchange="importCloset(this)" style="display:none">
+                Restore Archive
+            </label>
+        </div>
+    </div>
+
     <script>
+        /* ALL YOUR JAVASCRIPT GOES HERE */
         let closet = JSON.parse(localStorage.getItem('myCloset') || "[]");
 
-function showPreview(input) {
-  const container = document.getElementById('previewContainer');
-  const img = document.getElementById('imagePreview');
-  if (input.files && input.files[0]) {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      img.src = e.target.result;
-      container.classList.remove('hidden'); // SHOW BOX
-    };
-    reader.readAsDataURL(input.files[0]);
-  }
-}
+        function showPreview(input) {
+            const container = document.getElementById('previewContainer');
+            const img = document.getElementById('imagePreview');
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    img.src = e.target.result;
+                    container.classList.remove('hidden');
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
 
-function processAndSave() {
-  const fileInput = document.getElementById('fileInput');
-  const tagInput = document.getElementById('tagInput');
-  const previewContainer = document.getElementById('previewContainer');
-  const previewImg = document.getElementById('imagePreview');
-  const file = fileInput.files[0];
-  
-  if (!file) return alert("Please select a photo first!");
+        function processAndSave() {
+            const fileInput = document.getElementById('fileInput');
+            const tagInput = document.getElementById('tagInput');
+            const previewContainer = document.getElementById('previewContainer');
+            const file = fileInput.files[0];
+            if (!file) return alert("Select a photo!");
 
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    const img = new Image();
-    img.onload = () => {
-      const canvas = document.createElement('canvas');
-      const MAX_WIDTH = 500;
-      canvas.width = MAX_WIDTH;
-      canvas.height = img.height * (MAX_WIDTH / img.width);
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      
-      const tags = tagInput.value.split(',').map(t => t.trim().toLowerCase()).filter(t => t);
-      const newItem = {
-        image: canvas.toDataURL('image/png'),
-        tags: tags,
-        id: Date.now()
-      };
-      
-      closet.push(newItem);
-      localStorage.setItem('myCloset', JSON.stringify(closet));
-      
-      // RESET AND HIDE
-      tagInput.value = "";
-      fileInput.value = "";
-      previewImg.src = "";
-      previewContainer.classList.add('hidden'); // HIDE BOX
-      
-      renderAll();
-    };
-    img.src = e.target.result;
-  };
-  reader.readAsDataURL(file);
-}
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 500;
+                    canvas.width = MAX_WIDTH;
+                    canvas.height = img.height * (MAX_WIDTH / img.width);
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    const tags = tagInput.value.split(',').map(t => t.trim().toLowerCase()).filter(t => t);
+                    closet.push({ image: canvas.toDataURL('image/png'), tags: tags, id: Date.now() });
+                    localStorage.setItem('myCloset', JSON.stringify(closet));
+                    tagInput.value = ""; fileInput.value = ""; 
+                    previewContainer.classList.add('hidden');
+                    renderAll();
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
 
-function addToMoodboard(imageUrl) {
-  const canvas = document.getElementById('moodboardCanvas');
-  const hint = document.getElementById('moodboardHint');
-  if (hint) hint.remove();
+        function addToMoodboard(imageUrl) {
+            const canvas = document.getElementById('moodboardCanvas');
+            const hint = document.getElementById('moodboardHint');
+            if (hint) hint.remove();
+            const img = document.createElement('img');
+            img.src = imageUrl; img.className = 'moodboard-item';
+            img.style.transform = `rotate(${(Math.random() * 10 - 5)}deg)`;
+            img.onclick = function() { this.remove(); };
+            canvas.appendChild(img);
+        }
 
-  const img = document.createElement('img');
-  img.src = imageUrl;
-  img.className = 'moodboard-item';
-  const randomRot = (Math.random() * 12 - 6).toFixed(2);
-  img.style.transform = `rotate(${randomRot}deg)`;
-  img.onclick = function() { this.remove(); };
-  canvas.appendChild(img);
-}
+        function clearMoodboard() {
+            document.getElementById('moodboardCanvas').innerHTML = '<p id="moodboardHint">Click items below to add to moodboard</p>';
+            document.getElementById('outfitName').value = "";
+        }
 
-function clearMoodboard() {
-  document.getElementById('moodboardCanvas').innerHTML = '<p id="moodboardHint">Click items below to add to your moodboard</p>';
-  document.getElementById('outfitName').value = "";
-}
+        async function saveMoodboard() {
+            const items = document.querySelectorAll('.moodboard-item');
+            if (items.length === 0) return alert("Canvas is empty!");
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 1000; canvas.height = 1000;
+            ctx.fillStyle = "#ffffff"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#1e5f74"; ctx.font = "bold 40px sans-serif";
+            ctx.fillText((document.getElementById('outfitName').value || "LOOK").toUpperCase(), 50, 80);
+            
+            let x = 60, y = 150;
+            for (let item of items) {
+                const img = await new Promise(res => { const i = new Image(); i.onload = () => res(i); i.src = item.src; });
+                ctx.drawImage(img, x, y, 280, 280);
+                x += 310; if (x > 700) { x = 60; y += 310; }
+            }
+            const link = document.createElement('a');
+            link.download = 'look.png'; link.href = canvas.toDataURL('image/png'); link.click();
+        }
 
-async function saveMoodboard() {
-  const moodboard = document.getElementById('moodboardCanvas');
-  const items = moodboard.querySelectorAll('.moodboard-item');
-  const name = document.getElementById('outfitName').value || "Untitled Look";
-  if (items.length === 0) return alert("Add items to the moodboard first!");
+        function renderAll(filter = "") {
+            const grid = document.getElementById('closetGrid');
+            const filtered = filter ? closet.filter(i => i.tags.includes(filter.toLowerCase())) : closet;
+            grid.innerHTML = filtered.map(item => `
+                <div class="item-card">
+                    <img src="${item.image}" onclick="addToMoodboard('${item.image}')">
+                    <div style="padding:5px; display:flex; justify-content:space-between;">
+                        <button class="delete-btn" onclick="deleteItem(${item.id})">✕</button>
+                        <button class="delete-btn" style="background:var(--teal)" onclick="enableEdit(${item.id})">EDIT</button>
+                    </div>
+                    <div id="tags-${item.id}">${item.tags.map(t => `<span class="tag-pill" onclick="renderAll('${t}')">${t}</span>`).join('')}</div>
+                </div>
+            `).reverse().join('');
+            updateStats();
+        }
 
-  const canvas = document.createElement('canvas');
-  const ctx = canvas.getContext('2d');
-  canvas.width = 1000; canvas.height = 1000;
-  
-  ctx.fillStyle = "#ffffff";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+        function deleteItem(id) { if(confirm("Delete?")) { closet = closet.filter(i => i.id !== id); localStorage.setItem('myCloset', JSON.stringify(closet)); renderAll(); } }
+        
+        function enableEdit(id) {
+            const item = closet.find(i => i.id === id);
+            document.getElementById(`tags-${id}`).innerHTML = `<input type="text" id="edit-${id}" value="${item.tags.join(', ')}" style="font-size:10px; width:70%"><button onclick="saveEdit(${id})">OK</button>`;
+        }
 
-  ctx.fillStyle = "#1e5f74";
-  ctx.font = "bold 45px sans-serif";
-  ctx.fillText(name.toUpperCase(), 50, 80);
-  ctx.fillStyle = "#d9534f";
-  ctx.font = "20px sans-serif";
-  ctx.fillText(`ARCHIVED: ${new Date().toLocaleDateString()}`, 50, 115);
+        function saveEdit(id) {
+            const val = document.getElementById(`edit-${id}`).value;
+            closet[closet.findIndex(i => i.id === id)].tags = val.split(',').map(t => t.trim().toLowerCase()).filter(t => t);
+            localStorage.setItem('myCloset', JSON.stringify(closet)); renderAll();
+        }
 
-  const drawImg = (src) => new Promise(res => {
-    const i = new Image();
-    i.onload = () => res(i);
-    i.src = src;
-  });
+        function updateStats() {
+            const counts = {}; closet.forEach(i => i.tags.forEach(t => counts[t] = (counts[t] || 0) + 1));
+            const sorted = Object.entries(counts).sort((a,b) => b[1]-a[1]);
+            document.getElementById('statsContent').innerHTML = sorted.map(([t, c]) => `<div class="stat-item">${t.toUpperCase()}: ${c}</div>`).join('') || "Empty.";
+        }
 
-  let x = 60, y = 180;
-  for (let item of items) {
-    const img = await drawImg(item.src);
-    ctx.drawImage(img, x, y, 280, 280);
-    x += 310;
-    if (x > 700) { x = 60; y += 310; }
-  }
+        function exportCloset() {
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(new Blob([JSON.stringify(closet)], {type:'application/json'}));
+            a.download = 'closet.json'; a.click();
+        }
 
-  const link = document.createElement('a');
-  link.download = `${name.replace(/\s+/g, '-')}.png`;
-  link.href = canvas.toDataURL('image/png');
-  link.click();
-}
+        function importCloset(input) {
+            const reader = new FileReader();
+            reader.onload = (e) => { closet = JSON.parse(e.target.result); localStorage.setItem('myCloset', JSON.stringify(closet)); renderAll(); };
+            reader.readAsText(input.files[0]);
+        }
 
-function renderAll(filter = "") {
-  const grid = document.getElementById('closetGrid');
-  const filtered = filter ? closet.filter(i => i.tags.includes(filter.toLowerCase())) : closet;
-  
-  grid.innerHTML = filtered.map(item => `
-    <div class="item-card">
-      <img src="${item.image}" onclick="addToMoodboard('${item.image}')">
-      <div style="padding:5px; display:flex; justify-content:space-between;">
-         <button class="delete-btn" onclick="deleteItem(${item.id})">✕</button>
-         <button class="delete-btn" style="background:var(--teal)" onclick="enableEdit(${item.id})">EDIT</button>
-      </div>
-      <div id="tags-${item.id}" class="item-tags">
-        ${item.tags.map(t => `<span class="tag-pill" onclick="renderAll('${t}')">${t}</span>`).join('')}
-      </div>
-    </div>
-  `).reverse().join('');
-  updateStats();
-}
-
-function enableEdit(id) {
-  const item = closet.find(i => i.id === id);
-  const tagDiv = document.getElementById(`tags-${id}`);
-  tagDiv.innerHTML = `
-    <input type="text" id="edit-i-${id}" value="${item.tags.join(', ')}" style="font-size:10px; width:70%;">
-    <button onclick="saveEdit(${id})" style="font-size:10px; background:var(--dark); color:white; border:none; padding: 2px 5px;">OK</button>
-  `;
-}
-
-function saveEdit(id) {
-  const val = document.getElementById(`edit-i-${id}`).value;
-  const idx = closet.findIndex(i => i.id === id);
-  closet[idx].tags = val.split(',').map(t => t.trim().toLowerCase()).filter(t => t);
-  localStorage.setItem('myCloset', JSON.stringify(closet));
-  renderAll();
-}
-
-function deleteItem(id) {
-  if (confirm("Delete this?")) {
-    closet = closet.filter(i => i.id !== id);
-    localStorage.setItem('myCloset', JSON.stringify(closet));
-    renderAll();
-  }
-}
-
-function updateStats() {
-  const counts = {};
-  closet.forEach(i => i.tags.forEach(t => counts[t] = (counts[t] || 0) + 1));
-  const sorted = Object.entries(counts).sort((a,b) => b[1]-a[1]);
-  document.getElementById('statsContent').innerHTML = sorted.map(([t, c]) => `
-    <div class="stat-item">${t.toUpperCase()}: <span style="color:var(--teal)">${c}</span></div>
-  `).join('') || "<em>Empty archive.</em>";
-}
-
-function exportCloset() {
+        function filterBySearch() { renderAll(document.getElementById('searchBar').value); }
+        renderAll();
     </script>
 </body>
-
 </html>
