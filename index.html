@@ -194,13 +194,23 @@
             border: 1px solid var(--dark);
         }
 
-        .delete-btn {
+        .btn-row {
+            padding: 5px;
+            display: flex;
+            justify-content: space-between;
+            gap: 4px;
+        }
+
+        .card-btn {
+            flex: 1;
             background: var(--dark);
             color: white;
             border: none;
-            font-size: 10px;
-            padding: 2px 6px;
+            font-size: 9px;
+            padding: 4px 2px;
             cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
         }
 
         .stats-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
@@ -257,6 +267,7 @@
             </label>
             <div id="previewContainer" class="hidden preview-thumbnail-wrapper">
                 <img id="imagePreview" src="">
+                <button class="card-btn" style="background:var(--mustard); color:var(--dark); margin-top:5px; width:100%" onclick="searchWebSource('imagePreview')">🔍 Identify Item on Web</button>
             </div>
             <input type="text" id="tagInput" placeholder="Tags (e.g. Silk, Blue)">
             <button class="add-btn" onclick="processAndSave()">Add to Archive</button>
@@ -296,6 +307,19 @@
         if (activeBtn) activeBtn.classList.add('active');
     }
 
+    // WEB SEARCH LOGIC (Google Lens workaround)
+    function searchWebSource(imgId) {
+        const img = document.getElementById(imgId);
+        if (!img.src || img.src.includes('placeholder')) return alert("No image to search!");
+        
+        // This opens Google Images search by URL. 
+        // Note: For actual local images, Lens works best via the native app. 
+        // This will attempt to search via Google's visual search engine.
+        const searchUrl = `https://www.google.com/searchbyimage?image_url=${encodeURIComponent(img.src)}&sbisrc=cr_1`;
+        window.open(searchUrl, '_blank');
+        alert("Opening search. If you find a better image, save it and use 'EDIT' to swap it!");
+    }
+
     function showPreview(input) {
         const container = document.getElementById('previewContainer');
         const img = document.getElementById('imagePreview');
@@ -331,7 +355,6 @@
                 localStorage.setItem('myCloset', JSON.stringify(closet));
                 tagInput.value = ""; fileInput.value = ""; previewContainer.classList.add('hidden');
                 renderAll();
-                alert("Saved!");
             };
             img.src = e.target.result;
         };
@@ -347,7 +370,6 @@
         img.style.transform = `rotate(${(Math.random() * 12 - 6)}deg)`;
         img.onclick = function() { this.remove(); };
         canvas.appendChild(img);
-        alert("Added to Plan!");
     }
 
     function clearMoodboard() {
@@ -380,18 +402,15 @@
         const clearBtn = document.getElementById('clearFiltersBtn');
         const filtered = filter ? closet.filter(i => i.tags.includes(filter.toLowerCase())) : closet;
         
-        if (filter) {
-            clearBtn.classList.remove('hidden');
-        } else {
-            clearBtn.classList.add('hidden');
-        }
+        filter ? clearBtn.classList.remove('hidden') : clearBtn.classList.add('hidden');
 
         grid.innerHTML = filtered.map(item => `
             <div class="item-card">
-                <img src="${item.image}" onclick="addToMoodboard('${item.image}')">
-                <div style="padding:5px; display:flex; justify-content:space-between;">
-                    <button class="delete-btn" onclick="deleteItem(${item.id})">✕</button>
-                    <button class="delete-btn" style="background:var(--teal)" onclick="enableEdit(${item.id})">EDIT</button>
+                <img id="img-${item.id}" src="${item.image}" onclick="addToMoodboard('${item.image}')">
+                <div class="btn-row">
+                    <button class="card-btn" onclick="deleteItem(${item.id})">✕</button>
+                    <button class="card-btn" style="background:var(--teal)" onclick="enableEdit(${item.id})">EDIT</button>
+                    <button class="card-btn" style="background:var(--mustard); color:var(--dark)" onclick="searchWebSource('img-${item.id}')">FIND</button>
                 </div>
                 <div id="tags-${item.id}" class="item-tags">
                     ${item.tags.map(t => `<span class="tag-pill" onclick="renderAll('${t}')">${t}</span>`).join('')}
@@ -417,7 +436,34 @@
     function enableEdit(id) {
         const item = closet.find(i => i.id === id);
         const tagDiv = document.getElementById(`tags-${id}`);
-        tagDiv.innerHTML = `<input type="text" id="edit-i-${id}" value="${item.tags.join(', ')}" style="font-size:10px; width:70%;"><button onclick="saveEdit(${id})" style="font-size:10px; background:var(--dark); color:white;">OK</button>`;
+        tagDiv.innerHTML = `
+            <input type="text" id="edit-i-${id}" value="${item.tags.join(', ')}" style="font-size:10px; width:100%; margin-bottom:5px;">
+            <label class="card-btn" style="display:block; text-align:center">
+                SWAP IMG <input type="file" style="display:none" onchange="swapImage(${id}, this)">
+            </label>
+            <button onclick="saveEdit(${id})" style="width:100%; background:var(--dark); color:white; border:none; margin-top:5px;">SAVE</button>
+        `;
+    }
+
+    function swapImage(id, input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 500;
+                    canvas.width = MAX_WIDTH;
+                    canvas.height = img.height * (MAX_WIDTH / img.width);
+                    canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+                    const idx = closet.findIndex(i => i.id === id);
+                    closet[idx].image = canvas.toDataURL('image/png');
+                    renderAll();
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
     }
 
     function saveEdit(id) {
@@ -445,10 +491,7 @@
         reader.readAsText(input.files[0]);
     }
 
-    function filterBySearch() {
-        renderAll(document.getElementById('searchBar').value);
-    }
-
+    function filterBySearch() { renderAll(document.getElementById('searchBar').value); }
     renderAll();
 </script>
 </body>
