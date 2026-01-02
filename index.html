@@ -22,7 +22,6 @@
             --dark: #2d2926;
         }
 
-        /* Fixes the overscroll color on mobile */
         html { background-color: var(--cream); }
 
         body {
@@ -53,7 +52,6 @@
         }
         .atomic-star { font-size: 2rem; color: var(--mustard); margin-bottom: -10px; }
 
-        /* Navigation Menu */
         .mcm-nav {
             display: flex;
             justify-content: space-between;
@@ -81,7 +79,6 @@
             transform: translate(2px, 2px);
         }
 
-        /* View Sections */
         .view-section { animation: fadeIn 0.3s ease-in; }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
@@ -147,7 +144,6 @@
             background: white;
         }
 
-        /* Moodboard Canvas */
         .moodboard-display {
             background-color: white;
             border: 2px solid var(--dark);
@@ -170,7 +166,6 @@
             cursor: pointer;
         }
 
-        /* Grid & Cards */
         .grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -278,15 +273,15 @@
             
             <div id="previewContainer" class="hidden preview-thumbnail-wrapper">
                 <img id="imagePreview" src="">
-                <button class="card-btn" style="background:var(--mustard); color:var(--dark); margin-top:5px; width:100%" onclick="searchWebSource('imagePreview')">🔍 Identify Item on Web</button>
+                <button class="card-btn" id="previewSearchBtn" style="background:var(--mustard); color:var(--dark); margin-top:5px; width:100%" onclick="searchWebSource('imagePreview')">🔍 Identify Item on Web</button>
             </div>
 
             <div style="margin-top: 15px;">
                 <div style="display: flex; gap: 5px;">
-                    <input type="text" id="colorInput" placeholder="Color (e.g. Navy)">
-                    <input type="text" id="typeInput" placeholder="Piece (e.g. Blazer)">
+                    <input type="text" id="colorInput" placeholder="Color">
+                    <input type="text" id="typeInput" placeholder="Piece">
                 </div>
-                <input type="text" id="tagInput" placeholder="Additional tags (Silk, 1960s, Formal)">
+                <input type="text" id="tagInput" placeholder="Additional tags (comma separated)">
             </div>
             
             <button class="add-btn" onclick="processAndSave()">Add to Archive</button>
@@ -326,11 +321,28 @@
         if (activeBtn) activeBtn.classList.add('active');
     }
 
-    function searchWebSource(imgId) {
+    // FIXED SEARCH FUNCTION: Uses Clipboard API to avoid crashing URL limits
+    async function searchWebSource(imgId) {
         const img = document.getElementById(imgId);
-        if (!img.src || img.src.includes('placeholder')) return alert("No image to search!");
-        const searchUrl = `https://www.google.com/searchbyimage?image_url=${encodeURIComponent(img.src)}&sbisrc=cr_1`;
-        window.open(searchUrl, '_blank');
+        if (!img || !img.src || img.src.includes('placeholder')) return alert("No image to search!");
+
+        try {
+            // 1. Fetch the image blob from Base64
+            const response = await fetch(img.src);
+            const blob = await response.blob();
+
+            // 2. Copy to clipboard
+            const item = new ClipboardItem({ "image/png": blob });
+            await navigator.clipboard.write([item]);
+
+            // 3. User Guidance
+            if (confirm("Image copied to clipboard! Opening Google Lens. Just PASTE (Ctrl+V) into the search box there.")) {
+                window.open('https://lens.google.com/upload', '_blank');
+            }
+        } catch (err) {
+            console.error(err);
+            alert("Clipboard search failed. Try long-pressing the image to copy it manually, then paste into Google Lens.");
+        }
     }
 
     function showPreview(input) {
@@ -366,14 +378,16 @@
                 const ctx = canvas.getContext('2d');
                 ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
                 
-                // Merge tags from all boxes
                 const rawTags = [colorInput.value, typeInput.value, ...tagInput.value.split(',')];
                 const cleanTags = [...new Set(rawTags.map(t => t.trim().toLowerCase()).filter(t => t))];
 
-                closet.push({ image: canvas.toDataURL('image/png'), tags: cleanTags, id: Date.now() });
-                localStorage.setItem('myCloset', JSON.stringify(closet));
+                try {
+                    closet.push({ image: canvas.toDataURL('image/png'), tags: cleanTags, id: Date.now() });
+                    localStorage.setItem('myCloset', JSON.stringify(closet));
+                } catch(e) {
+                    alert("Storage full! Export your data or delete old items.");
+                }
                 
-                // Clear UI
                 [colorInput, typeInput, tagInput, fileInput].forEach(i => i.value = "");
                 document.getElementById('previewContainer').classList.add('hidden');
                 renderAll();
@@ -381,31 +395,6 @@
             img.src = e.target.result;
         };
         reader.readAsDataURL(file);
-    }
-
-    function enableEdit(id) {
-        const item = closet.find(i => i.id === id);
-        const tagDiv = document.getElementById(`tags-${id}`);
-        tagDiv.innerHTML = `
-            <div style="background: #fdfaf5; padding: 10px; border: 1px solid var(--dark); margin-top: 5px;">
-                <input type="text" id="edit-val-${id}" value="${item.tags.join(', ')}" style="font-size:11px; margin-bottom:5px;">
-                <label class="card-btn" style="display:block; text-align:center; background:var(--mustard); color:var(--dark); margin-bottom:5px;">
-                    SWAP PHOTO <input type="file" style="display:none" onchange="swapImage(${id}, this)">
-                </label>
-                <div style="display:flex; gap: 5px;">
-                    <button onclick="saveEdit(${id})" style="flex:1; background:var(--teal); color:white; border:none; padding:5px;">SAVE</button>
-                    <button onclick="renderAll()" style="flex:1; background:var(--orange); color:white; border:none; padding:5px;">CANCEL</button>
-                </div>
-            </div>
-        `;
-    }
-
-    function saveEdit(id) {
-        const val = document.getElementById(`edit-val-${id}`).value;
-        const newTags = [...new Set(val.split(',').map(t => t.trim().toLowerCase()).filter(t => t))];
-        closet[closet.findIndex(i => i.id === id)].tags = newTags;
-        localStorage.setItem('myCloset', JSON.stringify(closet));
-        renderAll();
     }
 
     function renderAll(filter = "") {
@@ -467,34 +456,11 @@
         link.download = `${name.replace(/\s+/g, '-')}.png`; link.href = canvas.toDataURL('image/png'); link.click();
     }
 
-    function resetView() { document.getElementById('searchBar').value = ""; renderAll(); }
-
     function deleteItem(id) {
         if (confirm("Delete this?")) {
             closet = closet.filter(i => i.id !== id);
             localStorage.setItem('myCloset', JSON.stringify(closet));
             renderAll();
-        }
-    }
-
-    function swapImage(id, input) {
-        if (input.files && input.files[0]) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const img = new Image();
-                img.onload = () => {
-                    const canvas = document.createElement('canvas');
-                    const MAX_WIDTH = 500;
-                    canvas.width = MAX_WIDTH;
-                    canvas.height = img.height * (MAX_WIDTH / img.width);
-                    canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-                    closet[closet.findIndex(i => i.id === id)].image = canvas.toDataURL('image/png');
-                    localStorage.setItem('myCloset', JSON.stringify(closet));
-                    renderAll();
-                };
-                img.src = e.target.result;
-            };
-            reader.readAsDataURL(input.files[0]);
         }
     }
 
@@ -512,11 +478,42 @@
 
     function importCloset(input) {
         const reader = new FileReader();
-        reader.onload = (e) => { closet = JSON.parse(e.target.result); localStorage.setItem('myCloset', JSON.stringify(closet)); renderAll(); };
+        reader.onload = (e) => { 
+            try {
+                closet = JSON.parse(e.target.result); 
+                localStorage.setItem('myCloset', JSON.stringify(closet)); 
+                renderAll(); 
+            } catch(e) { alert("Invalid JSON file"); }
+        };
         reader.readAsText(input.files[0]);
     }
 
     function filterBySearch() { renderAll(document.getElementById('searchBar').value); }
+    function resetView() { document.getElementById('searchBar').value = ""; renderAll(); }
+    
+    // Support for editing tags
+    function enableEdit(id) {
+        const item = closet.find(i => i.id === id);
+        const tagDiv = document.getElementById(`tags-${id}`);
+        tagDiv.innerHTML = `
+            <div style="background: #fdfaf5; padding: 10px; border: 1px solid var(--dark); margin-top: 5px;">
+                <input type="text" id="edit-val-${id}" value="${item.tags.join(', ')}" style="font-size:11px; margin-bottom:5px;">
+                <div style="display:flex; gap: 5px;">
+                    <button onclick="saveEdit(${id})" style="flex:1; background:var(--teal); color:white; border:none; padding:5px;">SAVE</button>
+                    <button onclick="renderAll()" style="flex:1; background:var(--orange); color:white; border:none; padding:5px;">CANCEL</button>
+                </div>
+            </div>
+        `;
+    }
+
+    function saveEdit(id) {
+        const val = document.getElementById(`edit-val-${id}`).value;
+        const newTags = [...new Set(val.split(',').map(t => t.trim().toLowerCase()).filter(t => t))];
+        closet[closet.findIndex(i => i.id === id)].tags = newTags;
+        localStorage.setItem('myCloset', JSON.stringify(closet));
+        renderAll();
+    }
+
     renderAll();
 </script>
 </body>
