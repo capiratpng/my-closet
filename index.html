@@ -112,7 +112,7 @@
             background: #fdfaf5;
             font-family: 'Space Grotesk', sans-serif;
             box-sizing: border-box;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         .add-btn {
@@ -221,6 +221,25 @@
         .stats-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
         .stat-item { background: var(--cream); border: 1px solid var(--dark); padding: 4px 8px; font-size: 0.75rem; font-weight: 700; }
         
+        .report-section {
+            border-top: 1px solid #ccc;
+            margin-top: 15px;
+            padding-top: 10px;
+        }
+
+        .report-bar {
+            height: 8px;
+            background: #eee;
+            border-radius: 4px;
+            margin: 4px 0 10px 0;
+            overflow: hidden;
+        }
+
+        .report-fill {
+            height: 100%;
+            background: var(--teal);
+        }
+
         .clear-filters-btn {
             background: var(--dark);
             color: white;
@@ -241,7 +260,7 @@
     <header>
         <div class="atomic-star">✦</div>
         <h1>THE VAULT</h1>
-        <p class="subtitle">EST. 2026 • PERSONAL ARCHIVE</p>
+        <p class="subtitle">EST. 2026 • ARCHIVAL CATALOG</p>
     </header>
 
     <nav class="mcm-nav">
@@ -273,15 +292,23 @@
             
             <div id="previewContainer" class="hidden preview-thumbnail-wrapper">
                 <img id="imagePreview" src="">
-                <button class="card-btn" id="previewSearchBtn" style="background:var(--mustard); color:var(--dark); margin-top:5px; width:100%" onclick="searchWebSource('imagePreview')">🔍 Identify Item on Web</button>
+                <button class="card-btn" style="background:var(--mustard); color:var(--dark); margin-top:5px; width:100%" onclick="searchWebSource('imagePreview')">🔍 Identify on Web</button>
             </div>
 
             <div style="margin-top: 15px;">
                 <div style="display: flex; gap: 5px;">
-                    <input type="text" id="colorInput" placeholder="Color">
-                    <input type="text" id="typeInput" placeholder="Piece">
+                    <input type="text" id="typeInput" placeholder="Item (Blazer)">
+                    <input type="text" id="materialInput" placeholder="Material (Silk)">
                 </div>
-                <input type="text" id="tagInput" placeholder="Additional tags (comma separated)">
+                <div style="display: flex; gap: 5px;">
+                    <input type="text" id="colorInput" placeholder="Color (Navy)">
+                    <input type="text" id="vibeInput" placeholder="Vibe (Minimal)">
+                </div>
+                <div style="display: flex; gap: 5px;">
+                    <input type="text" id="seasonInput" placeholder="Season (SS26)">
+                    <input type="text" id="locationInput" placeholder="Location (Box 01)">
+                </div>
+                <input type="text" id="tagInput" placeholder="Extra Tags (Brand, Price, etc)">
             </div>
             
             <button class="add-btn" onclick="processAndSave()">Add to Archive</button>
@@ -295,9 +322,14 @@
     </div>
 
     <div id="statsView" class="view-section hidden">
-        <div class="stats-panel" id="statsPanel">
-            <h3>Collection Insights</h3>
-            <div id="statsContent" class="stats-grid"></div>
+        <div class="stats-panel">
+            <h3>Vault Composition</h3>
+            <div id="vaultReport"></div>
+            
+            <div class="report-section">
+                <h4>All Tags</h4>
+                <div id="statsContent" class="stats-grid"></div>
+            </div>
         </div>
         <div class="stats-panel">
             <h3>System Settings</h3>
@@ -319,29 +351,22 @@
         document.getElementById(viewId).classList.remove('hidden');
         const activeBtn = Array.from(document.querySelectorAll('.nav-btn')).find(btn => btn.getAttribute('onclick').includes(viewId));
         if (activeBtn) activeBtn.classList.add('active');
+        if(viewId === 'statsView') updateStats();
     }
 
-    // FIXED SEARCH FUNCTION: Uses Clipboard API to avoid crashing URL limits
     async function searchWebSource(imgId) {
         const img = document.getElementById(imgId);
         if (!img || !img.src || img.src.includes('placeholder')) return alert("No image to search!");
-
         try {
-            // 1. Fetch the image blob from Base64
             const response = await fetch(img.src);
             const blob = await response.blob();
-
-            // 2. Copy to clipboard
             const item = new ClipboardItem({ "image/png": blob });
             await navigator.clipboard.write([item]);
-
-            // 3. User Guidance
-            if (confirm("Image copied to clipboard! Opening Google Lens. Just PASTE (Ctrl+V) into the search box there.")) {
+            if (confirm("Image copied! Opening Google Lens. Just PASTE (Ctrl+V) there.")) {
                 window.open('https://lens.google.com/upload', '_blank');
             }
         } catch (err) {
-            console.error(err);
-            alert("Clipboard search failed. Try long-pressing the image to copy it manually, then paste into Google Lens.");
+            alert("Clipboard access failed. Use long-press to copy.");
         }
     }
 
@@ -360,11 +385,10 @@
 
     function processAndSave() {
         const fileInput = document.getElementById('fileInput');
-        const colorInput = document.getElementById('colorInput');
-        const typeInput = document.getElementById('typeInput');
-        const tagInput = document.getElementById('tagInput');
+        const inputFields = ['typeInput', 'materialInput', 'colorInput', 'vibeInput', 'seasonInput', 'locationInput', 'tagInput'];
+        const values = inputFields.map(id => document.getElementById(id).value);
+        
         const file = fileInput.files[0];
-
         if (!file) return alert("Select a photo!");
 
         const reader = new FileReader();
@@ -378,17 +402,25 @@
                 const ctx = canvas.getContext('2d');
                 ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
                 
-                const rawTags = [colorInput.value, typeInput.value, ...tagInput.value.split(',')];
+                // Archival processing
+                const rawTags = values.map((v, i) => i === 6 ? v.split(',') : v).flat();
                 const cleanTags = [...new Set(rawTags.map(t => t.trim().toLowerCase()).filter(t => t))];
 
+                const itemData = {
+                    image: canvas.toDataURL('image/png'),
+                    tags: cleanTags,
+                    material: document.getElementById('materialInput').value.toLowerCase().trim(),
+                    color: document.getElementById('colorInput').value.toLowerCase().trim(),
+                    id: Date.now()
+                };
+
                 try {
-                    closet.push({ image: canvas.toDataURL('image/png'), tags: cleanTags, id: Date.now() });
+                    closet.push(itemData);
                     localStorage.setItem('myCloset', JSON.stringify(closet));
-                } catch(e) {
-                    alert("Storage full! Export your data or delete old items.");
-                }
+                } catch(e) { alert("LocalStorage full!"); }
                 
-                [colorInput, typeInput, tagInput, fileInput].forEach(i => i.value = "");
+                fileInput.value = "";
+                inputFields.forEach(id => document.getElementById(id).value = "");
                 document.getElementById('previewContainer').classList.add('hidden');
                 renderAll();
             };
@@ -418,6 +450,55 @@
             </div>
         `).reverse().join('');
         updateStats();
+    }
+
+    function updateStats() {
+        if (closet.length === 0) {
+            document.getElementById('vaultReport').innerHTML = "<em>No data yet.</em>";
+            return;
+        }
+
+        const reportDiv = document.getElementById('vaultReport');
+        
+        // Calculate Material & Color distribution
+        const getDist = (key) => {
+            const counts = {};
+            closet.forEach(item => {
+                if(item[key]) counts[item[key]] = (counts[item[key]] || 0) + 1;
+            });
+            return Object.entries(counts).sort((a,b) => b[1]-a[1]).slice(0,3);
+        };
+
+        const materials = getDist('material');
+        const colors = getDist('color');
+
+        let html = `<h4>Top Materials</h4>`;
+        materials.forEach(([name, count]) => {
+            const pct = Math.round((count / closet.length) * 100);
+            html += `<div style="font-size:0.7rem; display:flex; justify-content:space-between">
+                        <span>${name.toUpperCase()}</span><span>${pct}%</span>
+                     </div>
+                     <div class="report-bar"><div class="report-fill" style="width:${pct}%"></div></div>`;
+        });
+
+        html += `<h4 style="margin-top:15px">Top Colors</h4>`;
+        colors.forEach(([name, count]) => {
+            const pct = Math.round((count / closet.length) * 100);
+            html += `<div style="font-size:0.7rem; display:flex; justify-content:space-between">
+                        <span>${name.toUpperCase()}</span><span>${pct}%</span>
+                     </div>
+                     <div class="report-bar"><div class="report-fill" style="width:${pct}%; background:var(--mustard)"></div></div>`;
+        });
+
+        reportDiv.innerHTML = html;
+
+        // Update Tag Cloud
+        const allTags = {};
+        closet.forEach(i => i.tags.forEach(t => allTags[t] = (allTags[t] || 0) + 1));
+        const sortedTags = Object.entries(allTags).sort((a,b) => b[1]-a[1]);
+        document.getElementById('statsContent').innerHTML = sortedTags.map(([t, c]) => 
+            `<div class="stat-item" onclick="renderAll('${t}')" style="cursor:pointer">${t.toUpperCase()}: <span style="color:var(--teal)">${c}</span></div>`
+        ).join('');
     }
 
     function addToMoodboard(imageUrl) {
@@ -464,12 +545,6 @@
         }
     }
 
-    function updateStats() {
-        const counts = {}; closet.forEach(i => i.tags.forEach(t => counts[t] = (counts[t] || 0) + 1));
-        const sorted = Object.entries(counts).sort((a,b) => b[1]-a[1]);
-        document.getElementById('statsContent').innerHTML = sorted.map(([t, c]) => `<div class="stat-item" onclick="renderAll('${t}')" style="cursor:pointer">${t.toUpperCase()}: <span style="color:var(--teal)">${c}</span></div>`).join('') || "<em>Empty.</em>";
-    }
-
     function exportCloset() {
         const a = document.createElement('a');
         a.href = URL.createObjectURL(new Blob([JSON.stringify(closet)], {type:'application/json'}));
@@ -483,7 +558,7 @@
                 closet = JSON.parse(e.target.result); 
                 localStorage.setItem('myCloset', JSON.stringify(closet)); 
                 renderAll(); 
-            } catch(e) { alert("Invalid JSON file"); }
+            } catch(e) { alert("Invalid JSON"); }
         };
         reader.readAsText(input.files[0]);
     }
@@ -491,7 +566,6 @@
     function filterBySearch() { renderAll(document.getElementById('searchBar').value); }
     function resetView() { document.getElementById('searchBar').value = ""; renderAll(); }
     
-    // Support for editing tags
     function enableEdit(id) {
         const item = closet.find(i => i.id === id);
         const tagDiv = document.getElementById(`tags-${id}`);
@@ -509,7 +583,8 @@
     function saveEdit(id) {
         const val = document.getElementById(`edit-val-${id}`).value;
         const newTags = [...new Set(val.split(',').map(t => t.trim().toLowerCase()).filter(t => t))];
-        closet[closet.findIndex(i => i.id === id)].tags = newTags;
+        const idx = closet.findIndex(i => i.id === id);
+        closet[idx].tags = newTags;
         localStorage.setItem('myCloset', JSON.stringify(closet));
         renderAll();
     }
